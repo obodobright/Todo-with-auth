@@ -1,17 +1,21 @@
-import React, { useState, useEffect, createContext } from "react";
-import app from "../../firebase";
+import React, { createContext, useEffect, useState } from "react";
 import { getAuth } from "@firebase/auth";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState([]);
+  const auth = getAuth();
 
   useEffect(() => {
-    const auth = getAuth();
     auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
     });
   }, []);
-  return <AuthContext.Provider>{children}</AuthContext.Provider>;
+
+  return (
+    <AuthContext.Provider value={{ mgs: "This is the global state", currentUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

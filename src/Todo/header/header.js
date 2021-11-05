@@ -1,17 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../global/Authprovider";
+import { getAuth } from "@firebase/auth";
 
 export const Header = () => {
+  const { currentUser } = useContext(AuthContext);
+  console.log(currentUser);
+
+  const signOut = async () => {
+    const auth = getAuth();
+    await auth.signOut();
+  };
   return (
     <Container>
       <Wrapper>
         <Logo />
         <Navigation>
           <Nav to="/">Home</Nav>
-          <Nav to="/newtask">Create Task</Nav>
+          {currentUser ? <Nav to="/newtask">Create Task</Nav> : null}
         </Navigation>
-        <Nav to="/login">Login</Nav>
+        {currentUser ? <div onClick={signOut}>Logout</div> : <Nav to="/login">Login</Nav>}
       </Wrapper>
     </Container>
   );

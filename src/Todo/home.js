@@ -1,30 +1,53 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { BsBookmarksFill } from "react-icons/bs";
+import { BsFillBookmarkCheckFill, BsFillBookmarkDashFill } from "react-icons/bs";
 import { DoneBtn } from "./newTask/doneBtn";
-import { collection, onSnapshot } from "@firebase/firestore";
+import { collection, onSnapshot, setDoc } from "@firebase/firestore";
 import app from "../firebase";
+import { AuthContext } from "./global/Authprovider";
+import { doc, getDoc } from "firebase/firestore";
 const Home = () => {
   const [data, setData] = useState([]);
+  const [myUser, setMyUser] = useState(null);
+  const { currentUser } = useContext(AuthContext);
 
   const getData = async () => {
     await onSnapshot(collection(app, "todoTask"), (snapshot) =>
       setData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
   };
+  // to get current user data
+  const getCurrentUser = async () => {
+    const docRef = doc(app, "userdata", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return console.log(docSnap.data());
+    }
+  };
+  console.log(myUser);
+  console.log(currentUser);
 
   useEffect(() => {
     getData();
-  });
+    getCurrentUser();
+  }, []);
   return (
     <Container>
       <Wrapper>
-        {data?.map((data) => {
+        {/* <h1>Hello, {myUser?.username}</h1> */}
+
+        {data?.map((data, i) => {
           return (
-            <TaskHolder>
-              <Icon>
-                <BsBookmarksFill />
-              </Icon>
+            <TaskHolder key={i}>
+              {data?.done ? (
+                <Icon>
+                  <BsFillBookmarkCheckFill />
+                </Icon>
+              ) : (
+                <Icon>
+                  <BsFillBookmarkDashFill />
+                </Icon>
+              )}
               <TaskTitle>{data.task}</TaskTitle>
               <DoneBtn id={data.id} />
             </TaskHolder>

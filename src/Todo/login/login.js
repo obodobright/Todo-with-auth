@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { useHistory } from "react-router";
+import { doc, setDoc } from "firebase/firestore";
+import app from "../../firebase";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,11 +30,31 @@ export const Login = () => {
       return setErrors(err.message);
     }
   };
+  const signinWithGoogle = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const googleSignup = await signInWithPopup(auth, provider);
+
+    if (googleSignup) {
+      const collectionRef = doc(app, "userdata", googleSignup.user.uid);
+      const payload = { username, email };
+      setDoc(collectionRef, payload);
+    }
+  };
 
   const SignUp = async () => {
     try {
       const auth = getAuth();
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userData = await createUserWithEmailAndPassword(auth, email, password);
+
+      if (userData) {
+        const collectionRef = doc(app, "userdata", userData.user.uid);
+        const payload = { email, username };
+        setDoc(collectionRef, payload);
+      }
+      setEmail("");
+      setPassword("");
+      history.push("/");
     } catch (err) {
       return setErrors(err.message);
     }
@@ -51,15 +79,19 @@ export const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <div>
-              {errors === "Firebase: Error (auth/invalid-email)." &&
+              {errors}
+              {/* {errors === "Firebase: Error (auth/invalid-email)." &&
               "Firebase: Password should be at least 6 characters (auth/weak-password)."
                 ? "Email or password is not valid"
-                : null}
+                : null} */}
             </div>
             <Button onClick={SignUp}>Sign Up</Button>
             <SignText>
               Already have an account, <div onClick={() => setSignin(false)}>Sign In</div>
             </SignText>
+            <p>
+              Sign in with <span onClick={signinWithGoogle}>Google</span>
+            </p>
           </Form>
         ) : (
           <Form>
@@ -82,6 +114,9 @@ export const Login = () => {
             <SignText>
               Don't have an account <div onClick={() => setSignin(true)}>Sign Up</div>
             </SignText>
+            <p>
+              Sign in with <span onClick={signinWithGoogle}>Google</span>
+            </p>
           </Form>
         )}
       </Wrapper>
