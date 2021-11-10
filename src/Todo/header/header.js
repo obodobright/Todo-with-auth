@@ -8,7 +8,7 @@ export const Header = () => {
   const { currentUser } = useContext(AuthContext);
   console.log(currentUser);
 
-  const signOut = async () => {
+  const signout = async () => {
     const auth = getAuth();
     await auth.signOut();
   };
@@ -20,7 +20,7 @@ export const Header = () => {
           <Nav to="/">Home</Nav>
           {currentUser ? <Nav to="/newtask">Create Task</Nav> : null}
         </Navigation>
-        {currentUser ? <div onClick={signOut}>Logout</div> : <Nav to="/login">Login</Nav>}
+        {currentUser ? <div onClick={signout}>Logout</div> : <Nav to="/login">Login</Nav>}
       </Wrapper>
     </Container>
   );

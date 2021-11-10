@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { AuthProvider } from "./Todo/global/Authprovider";
+import { AuthProvider } from "./firebaseAuthPractice/component/context/autthProvider";
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import app from "../../firebase";
+import { app } from "../../firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { useHistory } from "react-router";
 

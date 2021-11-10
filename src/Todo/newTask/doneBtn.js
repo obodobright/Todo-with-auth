@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { BsCheckCircleFill } from "react-icons/bs";
-import app from "../../firebase";
+import { app } from "../../firebase";
 import { updateDoc, doc, addDoc } from "@firebase/firestore";
 
 export const DoneBtn = ({ id }) => {

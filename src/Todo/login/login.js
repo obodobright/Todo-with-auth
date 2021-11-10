@@ -6,10 +6,11 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  updateProfile,
 } from "firebase/auth";
 import { useHistory } from "react-router";
 import { doc, setDoc } from "firebase/firestore";
-import app from "../../firebase";
+import { app } from "../../firebase";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,6 +47,8 @@ export const Login = () => {
     try {
       const auth = getAuth();
       const userData = await createUserWithEmailAndPassword(auth, email, password);
+
+      await updateProfile(userData.user, { displayName: username });
 
       if (userData) {
         const collectionRef = doc(app, "userdata", userData.user.uid);

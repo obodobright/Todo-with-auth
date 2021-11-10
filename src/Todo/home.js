@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { BsFillBookmarkCheckFill, BsFillBookmarkDashFill } from "react-icons/bs";
 import { DoneBtn } from "./newTask/doneBtn";
 import { collection, onSnapshot, setDoc } from "@firebase/firestore";
-import app from "../firebase";
+import { app } from "../firebase";
 import { AuthContext } from "./global/Authprovider";
 import { doc, getDoc } from "firebase/firestore";
+
 const Home = () => {
   const [data, setData] = useState([]);
-  const [myUser, setMyUser] = useState(null);
+  const [myUser, setMyUser] = useState({});
   const { currentUser } = useContext(AuthContext);
 
   const getData = async () => {
@@ -18,11 +19,9 @@ const Home = () => {
   };
   // to get current user data
   const getCurrentUser = async () => {
-    const docRef = doc(app, "userdata", currentUser.uid);
+    const docRef = await doc(app, "userdata", currentUser.uid);
     const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return console.log(docSnap.data());
-    }
+    setMyUser(docSnap.data());
   };
   console.log(myUser);
   console.log(currentUser);
